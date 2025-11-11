@@ -120,10 +120,22 @@ namespace Microsoft.ConnectTheDots.Adapters
                     if( Array.IndexOf( ports, serialPortThread.portName ) == -1 )
                     {
                         // Serial port is no longer valid. Abort the listening process
+                        // NOTE: Thread.Abort is deprecated and unsafe. This legacy code should be refactored
+                        // to use CancellationToken for graceful thread termination.
 #if DEBUG_LOG
                         _logger.LogInfo( "Killed serial port: " + serialPortThread.portName );
 #endif
-                        serialPortThread.listeningThread.Abort( );
+                        try
+                        {
+#pragma warning disable SYSLIB0006 // Thread.Abort is obsolete
+                            serialPortThread.listeningThread.Abort( );
+#pragma warning restore SYSLIB0006
+                        }
+                        catch( PlatformNotSupportedException )
+                        {
+                            // Thread.Abort is not supported on all platforms
+                            _logger.LogError( "Thread.Abort not supported on this platform" );
+                        }
                         threadsKilled.Add( serialPortThread );
                     }
                 }

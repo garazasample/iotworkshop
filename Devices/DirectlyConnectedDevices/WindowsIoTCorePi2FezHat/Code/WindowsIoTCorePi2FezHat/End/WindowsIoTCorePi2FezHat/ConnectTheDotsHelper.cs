@@ -103,21 +103,23 @@ namespace WindowsIoTCorePi2FezHat
             foreach (ConnectTheDotsSensor sensor in sensors)
             {
                 sensor.timecreated = DateTime.UtcNow.ToString("o");
-                sendMessage(sensor.ToJson());
+                // Fire and forget pattern - acceptable for fire-and-forget telemetry
+                _ = SendMessageAsync(sensor.ToJson());
             }
         }
 
         public void SendSensorData(ConnectTheDotsSensor sensor)
         {
             sensor.timecreated = DateTime.UtcNow.ToString("o");
-            sendMessage(sensor.ToJson());
+            // Fire and forget pattern - acceptable for fire-and-forget telemetry
+            _ = SendMessageAsync(sensor.ToJson());
         }
 
         /// <summary>
         /// Send message to Azure Event Hub using HTTP/REST API
         /// </summary>
         /// <param name="message"></param>
-        public async void sendMessage(string message)
+        public async Task SendMessageAsync(string message)
         {
             if (this.EventHubConnectionInitialized)
             {

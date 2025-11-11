@@ -113,13 +113,15 @@ namespace Microsoft.ConnectTheDots.Gateway
 
             if( stop )
             {
-                if( _operational.WaitOne( timeout ) == false )
-                {
-                    // no other choice than forcing a stop
-                    _worker.Abort( );
-                }
+                // Wait for the worker thread to complete gracefully
+                // Thread.Abort is unsafe and deprecated - rely on _running flag instead
+                _operational.WaitOne( timeout );
 
-                _worker.Join( );
+                // Allow additional time for thread to exit gracefully
+                if( !_worker.Join( timeout ) )
+                {
+                    Logger.LogError( "Worker thread did not stop within timeout period" );
+                }
 
                 return true;
             }

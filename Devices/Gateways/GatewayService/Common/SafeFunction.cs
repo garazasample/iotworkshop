@@ -37,6 +37,11 @@ namespace Microsoft.ConnectTheDots.Common
 
         public SafeFunc( Func<TResult> function, ILogger logger )
         {
+            if( function == null )
+            {
+                throw new ArgumentNullException( nameof( function ) );
+            }
+
             _function = function;
             _logger = SafeLogger.FromLogger( logger );
         }
@@ -46,6 +51,16 @@ namespace Microsoft.ConnectTheDots.Common
             try
             {
                 return _function( );
+            }
+            catch( StackOverflowException )
+            {
+                // Don't catch StackOverflowException - let it propagate
+                throw;
+            }
+            catch( OutOfMemoryException )
+            {
+                // Don't catch OutOfMemoryException - let it propagate
+                throw;
             }
             catch( Exception ex )
             {
