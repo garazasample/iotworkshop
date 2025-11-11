@@ -36,7 +36,7 @@
             if (ctdHelper.IsConnectionReady)
             {
                 // Setup the FEZ HAT driver
-                Program.SetupHat();
+                Program.SetupHatAsync().Wait();
 
                 Console.WriteLine("Reading data from FEZ HAT sensors. Press Enter to Stop");
                 Console.ReadLine();
@@ -54,7 +54,7 @@
             }
         }
 
-        private static async void SetupHat()
+        private static async System.Threading.Tasks.Task SetupHatAsync()
         {
             // Initialize Fez Hat
             logger.Info("Initializing FEZ HAT");

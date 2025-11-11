@@ -536,7 +536,8 @@ namespace ConnectTheDotsWPBand
                 txtbox.Text = sensor.value.ToString();
                 if (Convert.ToBoolean(chkbox.IsChecked))
                 {
-                    sendMessage(sensor.ToJson());
+                    // Fire and forget pattern - acceptable for fire-and-forget telemetry
+                    _ = SendMessageAsync(sensor.ToJson());
                 }
             }
         }
@@ -593,7 +594,7 @@ namespace ConnectTheDotsWPBand
         /// Send message to Azure Event Hub using HTTP/REST API
         /// </summary>
         /// <param name="message"></param>
-        private async void sendMessage(string message)
+        private async Task SendMessageAsync(string message)
         {
             if (this.EventHubConnectionInitialized)
             {
