@@ -44,11 +44,12 @@ namespace WindowsIoTCorePi2FezHat
                 sensorList: sensors);
 
             // Initialize FEZ HAT shield
-            SetupHat();
+            // Fire and forget is acceptable for UI initialization
+            _ = SetupHatAsync();
             
         }
 
-        private async void SetupHat()
+        private async Task SetupHatAsync()
         {
             this.hat = await FEZHAT.CreateAsync();
             

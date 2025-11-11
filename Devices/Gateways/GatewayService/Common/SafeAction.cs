@@ -37,6 +37,11 @@ namespace Microsoft.ConnectTheDots.Common
 
         public SafeAction( Action<TParam> action, ILogger logger )
         {
+            if( action == null )
+            {
+                throw new ArgumentNullException( nameof( action ) );
+            }
+
             _action = action;
             _logger = SafeLogger.FromLogger( logger );
         }
@@ -46,6 +51,16 @@ namespace Microsoft.ConnectTheDots.Common
             try
             {
                 _action( obj );
+            }
+            catch( StackOverflowException )
+            {
+                // Don't catch StackOverflowException - let it propagate
+                throw;
+            }
+            catch( OutOfMemoryException )
+            {
+                // Don't catch OutOfMemoryException - let it propagate
+                throw;
             }
             catch( Exception ex )
             {
@@ -64,6 +79,11 @@ namespace Microsoft.ConnectTheDots.Common
 
         public SafeAction( Action action, ILogger logger )
         {
+            if( action == null )
+            {
+                throw new ArgumentNullException( nameof( action ) );
+            }
+
             _action = action;
             _logger = SafeLogger.FromLogger( logger );
         }
@@ -73,6 +93,16 @@ namespace Microsoft.ConnectTheDots.Common
             try
             {
                 _action( );
+            }
+            catch( StackOverflowException )
+            {
+                // Don't catch StackOverflowException - let it propagate
+                throw;
+            }
+            catch( OutOfMemoryException )
+            {
+                // Don't catch OutOfMemoryException - let it propagate
+                throw;
             }
             catch( Exception ex )
             {

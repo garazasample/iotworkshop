@@ -209,7 +209,7 @@ namespace Microsoft.ConnectTheDots.Common.Threading
     }
 #else
 
-    public class TaskWrapper
+    public class TaskWrapper : IDisposable
     {
         private static int _unique_id = 0;
 
@@ -218,6 +218,7 @@ namespace Microsoft.ConnectTheDots.Common.Threading
         private readonly int                    _id;
         private          _THREADING.TaskStatus  _status;
         private          ManualResetEvent       _completed;
+        private          bool                   _disposed;
 
         //--//
 
@@ -352,6 +353,24 @@ namespace Microsoft.ConnectTheDots.Common.Threading
             _status = _THREADING.TaskStatus.RanToCompletion;
 
             _completed.Set( );
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _completed?.Dispose();
+                }
+                _disposed = true;
+            }
         }
     }
 
